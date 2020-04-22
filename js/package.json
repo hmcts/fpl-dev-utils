@@ -1,0 +1,12 @@
+{
+  "name": "fpl-dev-utils",
+  "version": "1.0.0",
+  "description": "Various JS tools for FPL devs",
+  "devDependencies": {
+    "lodash": "^4.17.15"
+  },
+  "scripts": {
+    "ccd-dev-to-markup": "node ccd-def-to-markup"
+  },
+  "license": "MIT"
+}
