@@ -2,14 +2,39 @@
 
 export https_proxy=proxyout.reform.hmcts.net:8080
 
-curl -X PATCH \
-  https://idam-api.aat.platform.hmcts.net/testing-support/services/CCD \
-  -H 'Content-Type: application/json' \
-  -d '[ {
-    "operation": "add",
-    "field": "redirect_uri",
-    "value": "https://case-management-web-fpl-case-service-pr-'"$1"'.service.core-compute-preview.internal/oauth2redirect"
-    } ]'
+function ccdRedirect(){
+    curl -k -X PATCH \
+      https://idam-api.aat.platform.hmcts.net/testing-support/services/CCD \
+      -H 'Content-Type: application/json' \
+      -d '[ {
+        "operation": "add",
+        "field": "redirect_uri",
+        "value": "https://case-management-web-fpl-case-service-pr-'"$1"'.service.core-compute-preview.internal/oauth2redirect"
+        } ]'
+}
+
+function xuiRedirect(){
+    curl -k -X PATCH \
+      https://idam-api.aat.platform.hmcts.net/testing-support/services/XUI \
+      -H 'Content-Type: application/json' \
+      -d '[ {
+        "operation": "add",
+        "field": "redirect_uri",
+        "value": "https://xui-fpl-case-service-pr-'"$1"'.service.core-compute-preview.internal/oauth2/callback"
+        } ]'
+}
+
+case "$2" in
+    "ccd")
+    ccdRedirect "$1"
+    ;;
+    "xui")
+    xuiRedirect "$1"
+    ;;
+    *)
+    ccdRedirect "$1"
+    xuiRedirect "$1"
+    ;;
+esac
 
 export https_proxy=
-
