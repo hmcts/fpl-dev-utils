@@ -6,7 +6,12 @@
     "lodash": "^4.17.15"
   },
   "scripts": {
-    "ccd-dev-to-markup": "node ccd-def-to-markup"
+    "ccd-dev-to-markup": "node ccd-def-to-markup",
+    "audit": "node append-audit"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "minimist": "^1.2.5"
+  }
 }
