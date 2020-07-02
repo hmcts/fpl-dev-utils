@@ -20,17 +20,14 @@ if (checkArgs(args)) {
 }
 
 function main(args) {
-
-  checkArgs(args);
-
   const fingerprints = getFingerprints(args.fingerprints);
 
-  info(`checking for fingerprints: ${JSON.stringify(fingerprints)}`);
+  info(`checking for fingerprints: ${chalk.bold(fingerprints.join(', '))}\n`);
 
-  info(`reading: ${args.report}`);
+  info(`reading: ${chalk.bold(args.report)}`);
   const jsonReport = JSON.parse(fs.readFileSync(args.report));
 
-  info(`analysing: ${args.report}`);
+  info(`analysing...`);
   const auditInfo = {};
   const auditItems = {};
   jsonReport.forEach(item => {
@@ -47,15 +44,17 @@ function main(args) {
     });
   });
 
-  info('Times found:');
+  let text = 'Times found:\n';
   for (let fingerprint in auditInfo) {
-    info(`\t${fingerprint}: ${auditInfo[fingerprint]}`);
+    text += `  ${fingerprint}: ${auditInfo[fingerprint]}\n`;
   }
+
+  info(text)
 
   let fullAudit = [];
 
   if (fs.existsSync(args.audit)) {
-    info(`reading: ${args.audit}`);
+    info(`reading: ${chalk.bold(args.audit)}`);
     fullAudit = fs.readFileSync(args.audit);
   }
 
@@ -67,11 +66,10 @@ function main(args) {
 
   const concatenated = Object.assign(fullAudit, auditItems);
 
-  info(`writing to: ${args.audit}`);
+  info(`writing to: ${chalk.bold(args.audit)}\n`);
   fs.writeFileSync(args.audit, JSON.stringify(concatenated, null, 2));
 
-  let text = 'Added audit info for fingerprints: ' + Object.keys(auditInfo).join(', ');
-  success(text);
+  success(`Added audit info for fingerprints: ${chalk.bold(Object.keys(auditInfo).join(', '))}`);
 }
 
 function checkArgs(args) {
@@ -100,7 +98,6 @@ function checkArgs(args) {
   let fingerprints = args.fingerprints;
   fingerprints = removeEmptyFingerprints(fingerprints);
 
-  // now covers both 1 and multiple inputs
   if (fingerprints.length === 0) {
     error('provide at least one fingerprint');
     success = false;
@@ -111,7 +108,7 @@ function checkArgs(args) {
 
 function getFingerprints(fingerprints) {
   let altered = removeEmptyFingerprints(fingerprints);
-  altered = Array.isArray(altered) ? altered : [altered];
+  altered = Array.isArray(altered) ? altered : altered.split(',');
   return altered.filter((item, i) => altered.indexOf(item) === i);
 }
 
