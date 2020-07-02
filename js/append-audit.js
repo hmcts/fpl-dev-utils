@@ -23,7 +23,7 @@ function main(args) {
 
   checkArgs(args);
 
-  const fingerprints = Array.isArray(args.fingerprints) ? args.fingerprints : [args.fingerprints];
+  const fingerprints = getFingerprints(args.fingerprints);
 
   info(`checking for fingerprints: ${JSON.stringify(fingerprints)}`);
 
@@ -36,7 +36,7 @@ function main(args) {
   jsonReport.forEach(item => {
     fingerprints.forEach(fingerprint => {
       if (item.fingerprint.startsWith(fingerprint)) {
-        auditItems[item.fingerprint] = "ignore";
+        auditItems[item.fingerprint] = 'ignore';
 
         if (auditInfo[fingerprint] === undefined) {
           auditInfo[fingerprint] = 1;
@@ -52,47 +52,75 @@ function main(args) {
     info(`\t${fingerprint}: ${auditInfo[fingerprint]}`);
   }
 
-  info(`reading: ${args.audit}`);
-  let fullAudit = fs.readFileSync(args.audit);
+  let fullAudit = [];
+
+  if (fs.existsSync(args.audit)) {
+    info(`reading: ${args.audit}`);
+    fullAudit = fs.readFileSync(args.audit);
+  }
 
   if (fullAudit.length === 0) {
     fullAudit = {};
   } else {
     fullAudit = JSON.parse(fullAudit);
   }
+
   const concatenated = Object.assign(fullAudit, auditItems);
 
   info(`writing to: ${args.audit}`);
   fs.writeFileSync(args.audit, JSON.stringify(concatenated, null, 2));
 
-  let sep = " ";
-  let text = "Added audit info for";
-  for (let fingerprint in auditInfo) {
-    text = text + sep + fingerprint;
-    sep = ", "
-  }
-  success(text)
+  let text = 'Added audit info for fingerprints: ' + Object.keys(auditInfo).join(', ');
+  success(text);
 }
 
 function checkArgs(args) {
   let success = true;
 
   if (!args.fingerprints) {
-    error(`at least one fingerprint is required (-f)`);
+    error('at least one fingerprint is required (-f)');
     success = false;
   }
 
   if (!args.report) {
-    error(`a report file is required (-i)`);
+    error('a report file is required (-i)');
     success = false;
   }
 
   if (!args.audit) {
-    error(`an audit file is required to append to (-a)`)
+    error('an audit file is required to append to (-a)');
+    success = false;
+  }
+
+  if (!fs.existsSync(args.report)) {
+    error(`File not found: ${args.report}`);
+    success = false;
+  }
+
+  let fingerprints = args.fingerprints;
+  fingerprints = removeEmptyFingerprints(fingerprints);
+
+  // now covers both 1 and multiple inputs
+  if (fingerprints.length === 0) {
+    error('provide at least one fingerprint');
     success = false;
   }
 
   return success;
+}
+
+function getFingerprints(fingerprints) {
+  let altered = removeEmptyFingerprints(fingerprints);
+  altered = Array.isArray(altered) ? altered : [altered];
+  return altered.filter((item, i) => altered.indexOf(item) === i);
+}
+
+function removeEmptyFingerprints(fingerprints) {
+  if (Array.isArray(fingerprints)) {
+    return fingerprints.filter(fingerprint => fingerprint.trim().length > 0);
+  } else {
+    return fingerprints.trim();
+  }
 }
 
 function info(data) {
