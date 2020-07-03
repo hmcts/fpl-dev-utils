@@ -66,7 +66,7 @@ function main(args) {
 
   const concatenated = Object.assign(fullAudit, auditItems);
 
-  info(`writing to: ${chalk.bold(args.audit)}\n`);
+  info(`writing: ${chalk.bold(args.audit)}\n`);
   fs.writeFileSync(args.audit, JSON.stringify(concatenated, null, 2));
 
   success(`Added audit info for fingerprints: ${chalk.bold(Object.keys(auditInfo).join(', '))}`);
