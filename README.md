@@ -25,7 +25,7 @@ A script to append fingerprints to the audit.json from a report given by the glu
 #### Usage
 
 ```bash
-yarn run audit -- -i path/to/report -a path/to/audit -f FINGERPRINT_1,FINGERPRINT_2... [-f FINGERPRINT_3]
+yarn run audit -i /full/path/to/report -a /full/path/to/audit -f FINGERPRINT_1,FINGERPRINT_2... [-f FINGERPRINT_3]
 ```
 
 The full fingerprint isn't required just something to uniquely identify it (normally the fingerprint code)
