@@ -20,7 +20,7 @@ function xuiRedirect(){
       -d '[ {
         "operation": "add",
         "field": "redirect_uri",
-        "value": "https://xui-fpl-case-service-pr-'"$1"'.service.core-compute-preview.internal/oauth2/callback"
+        "value": "http://xui-fpl-case-service-pr-'"$1"'.service.core-compute-preview.internal/oauth2/callback"
         } ]'
 }
 
