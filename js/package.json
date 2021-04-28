@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Various JS tools for FPL devs",
   "devDependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.19"
   },
   "scripts": {
     "ccd-dev-to-markup": "node ccd-def-to-markup",
